@@ -5,11 +5,13 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sender", "sender\sender.csproj", "{05840CEF-4957-4715-AD27-A2779F42B38E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "splitter", "splitter\splitter.csproj", "{1CF9E712-BE83-4FF2-B91A-0C46F3623914}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "splitter", "splitter\splitter.csproj", "{1CF9E712-BE83-4FF2-B91A-0C46F3623914}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ageConsumer", "ageConsumer\ageConsumer.csproj", "{CA80899B-3470-4D15-8DFC-1507DB9D34CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ageConsumer", "ageConsumer\ageConsumer.csproj", "{CA80899B-3470-4D15-8DFC-1507DB9D34CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nameConsumer", "nameConsumer\nameConsumer.csproj", "{F383B144-B9A1-437A-A6AE-B4205BE6E0A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nameConsumer", "nameConsumer\nameConsumer.csproj", "{F383B144-B9A1-437A-A6AE-B4205BE6E0A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aggregator", "Aggregator\Aggregator.csproj", "{7E43DE1D-B269-4054-88B6-6DC3D82892FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{F383B144-B9A1-437A-A6AE-B4205BE6E0A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F383B144-B9A1-437A-A6AE-B4205BE6E0A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F383B144-B9A1-437A-A6AE-B4205BE6E0A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E43DE1D-B269-4054-88B6-6DC3D82892FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E43DE1D-B269-4054-88B6-6DC3D82892FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E43DE1D-B269-4054-88B6-6DC3D82892FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E43DE1D-B269-4054-88B6-6DC3D82892FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

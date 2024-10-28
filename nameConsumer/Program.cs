@@ -14,6 +14,9 @@ class NameConsumer
         //Opret nameQueue
         channel.QueueDeclare("nameQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
 
+        //Declare updatedNameQueue to send Enriched name (+Clausen for simplicity)
+        channel.QueueDeclare(queue: "updatedNameQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
+
         //Consumer til at modtage og håndtere beskeder fra ageQueue
         EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
         consumer.Received += (model, ea) =>
@@ -21,6 +24,11 @@ class NameConsumer
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             Console.WriteLine(" [x] Received {0}", message);
+
+            string updatedMessage = message + " Clausen";
+
+            channel.BasicPublish(exchange: "", routingKey: "updatedNameQueue", basicProperties: null, body: Encoding.UTF8.GetBytes(updatedMessage));
+            Console.WriteLine("Sent {0} to updatedNameQueue", updatedMessage);
 
         };
 
