@@ -8,84 +8,57 @@ class Aggregator
 {
     static void Main(string[] args)
     {
-        List<Person> persons = new List<Person>();
-        var person = new Person();
+        Dictionary<string, Person> persons = new Dictionary<string, Person>();
         var factory = new ConnectionFactory() { HostName = "localhost", Port = 5672 };
         using var connection = factory.CreateConnection();
         using var channel = connection.CreateModel();
 
-        //Her modtages det opdaterede navn fra nameConsumer
         channel.QueueDeclare(queue: "updatedNameQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
-
-        //Her modtages den opdaterede alder fra ageConsumer
         channel.QueueDeclare(queue: "updatedAgeQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
 
-
-        //Consumer til at modtage og håndtere beskeder fra vores compositeQueue
-        EventingBasicConsumer consumer = new EventingBasicConsumer(channel);
-        consumer.Received += (model, ea) =>
+        // Name Consumer
+        EventingBasicConsumer nameConsumer = new EventingBasicConsumer(channel);
+        nameConsumer.Received += (model, ea) =>
         {
-            //Modtager body og decoder bytes til string
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
-            Console.WriteLine(" [x] Received {0}", message);
+            var correlationId = ea.BasicProperties.CorrelationId;
 
-            try
-            {
-                int age = Convert.ToInt32(message);
-                bool isAgePopulated = false;
-                foreach  (Person person in persons)
-                {
-                    if (!person.hasAge())
-                    {
-                        person.Age = age;
-                        break;
-                    }
-                }
+            //Checks if correlationID is already present, if not create a new person obejct and add to dict
+            if (!persons.ContainsKey(correlationId))
+                persons[correlationId] = new Person();
 
-                if (!isAgePopulated)
-                {
-                    persons.Add(new Person { Age=age });
-                }
-            }
-            catch (Exception)
-            {
-                List<string> firstAndLastName = SplitName(message);
-                bool isNamePopulated = false;
-                foreach (Person person in persons)
-                {
-                    if (!person.hasName())
-                    {
-                        person.FirstName = firstAndLastName[0];
-                        person.LastName = firstAndLastName[1];
-                        isNamePopulated = true;
-                        break;
-                    }
-                }
+            var person = persons[correlationId];
+            var nameParts = message.Split(' ');
+            person.FirstName = nameParts[0];
+            person.LastName = string.Join(" ", nameParts.Skip(1));
 
-                if (!isNamePopulated)
-                {
-                    persons.Add(new Person { FirstName = firstAndLastName[0], LastName = firstAndLastName[1] });
-                }
-            }
-
-
-            Console.WriteLine("Person object count: {0}",persons.Count.ToString());
-            foreach (Person person in persons) 
-            {
-                Console.WriteLine("Person name:{0}, person age:{1}", person.getFullName(), person.Age);
-            }
+            Console.WriteLine("Name for CorrelationId {0} has been added: {1}", correlationId, person.getFullName());
         };
 
-        //Opret basicconsume på compositeQueue
-        channel.BasicConsume(queue: "updatedAgeQueue", autoAck: true, consumer: consumer);
-        channel.BasicConsume(queue: "updatedNameQueue", autoAck: true, consumer: consumer);
+        // Age Consumer
+        EventingBasicConsumer ageConsumer = new EventingBasicConsumer(channel);
+        ageConsumer.Received += (model, ea) =>
+        {
+            var body = ea.Body.ToArray();
+            var message = Encoding.UTF8.GetString(body);
+            var correlationId = ea.BasicProperties.CorrelationId;
 
+            //Checks if correlationID is already present, if not create a new person obejct and add to dict
+            if (!persons.ContainsKey(correlationId))
+                persons[correlationId] = new Person();
+
+            var person = persons[correlationId];
+            person.Age = int.Parse(message);
+
+            Console.WriteLine("Age for CorrelationId {0} has been added: {1}", correlationId, person.Age);
+        };
+
+        channel.BasicConsume(queue: "updatedNameQueue", autoAck: true, consumer: nameConsumer);
+        channel.BasicConsume(queue: "updatedAgeQueue", autoAck: true, consumer: ageConsumer);
 
         Console.WriteLine(" Press [enter] to exit.");
         Console.WriteLine("Waiting for messages.");
-
-
         Console.ReadLine();
     }
 

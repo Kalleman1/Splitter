@@ -32,23 +32,30 @@ class Splitter
             var arrayBody = body.ToArray();
             var deserializedBody = JsonSerializer.Deserialize<Person>(arrayBody);
 
+            // Generate a unique CorrelationId for this person
+            string correlationId = Guid.NewGuid().ToString();
+
             //Split personen i name og age
             var name = person.SplitName(deserializedBody);
             var age = person.SplitAge(deserializedBody);
 
+            //Create shared correlationID property for the two queues
+            var sharedProps = channel.CreateBasicProperties();
+            sharedProps.CorrelationId = correlationId;
+
             //Send name til nameQueue
             channel.BasicPublish(exchange: "",
                              routingKey: "nameQueue",
-                             basicProperties: null,
+                             basicProperties: sharedProps,
                              body: Encoding.UTF8.GetBytes(name));
-            Console.WriteLine(" [x] Sent {0}", name);
+            Console.WriteLine(" [x] Sent Name: {0} with CorrelationId: {1}", name, correlationId);
 
             //Send age til ageQueue
             channel.BasicPublish(exchange: "",
                              routingKey: "ageQueue",
-                             basicProperties: null,
+                             basicProperties: sharedProps,
                              body: Encoding.UTF8.GetBytes(age.ToString()));
-            Console.WriteLine(" [x] Sent {0}", age);
+            Console.WriteLine(" [x] Sent Age: {0} with CorrelationId: {1}", age, correlationId);
 
         };
 

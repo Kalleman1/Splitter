@@ -27,11 +27,14 @@ class AgeConsumer
         {
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
-            Console.WriteLine(" [x] Received {0}", message);
+            Console.WriteLine(" [x] Received Age: {0}", message);
 
             string newMessage = (Convert.ToInt32(message)+5).ToString();
 
-            channel.BasicPublish(exchange: "", routingKey: "updatedAgeQueue", basicProperties: null, body: Encoding.UTF8.GetBytes(newMessage));
+            var updatedAgeProps = channel.CreateBasicProperties();
+            updatedAgeProps.CorrelationId = ea.BasicProperties.CorrelationId; // Preserve CorrelationId
+
+            channel.BasicPublish(exchange: "", routingKey: "updatedAgeQueue", basicProperties: updatedAgeProps, body: Encoding.UTF8.GetBytes(newMessage));
             Console.WriteLine("Sent age:{0} to updatedAgeQueue", newMessage);
         };
 

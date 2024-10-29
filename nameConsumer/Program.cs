@@ -27,7 +27,10 @@ class NameConsumer
 
             string updatedMessage = message + " Clausen";
 
-            channel.BasicPublish(exchange: "", routingKey: "updatedNameQueue", basicProperties: null, body: Encoding.UTF8.GetBytes(updatedMessage));
+            var updatedNameProps = channel.CreateBasicProperties();
+            updatedNameProps.CorrelationId = ea.BasicProperties.CorrelationId;
+
+            channel.BasicPublish(exchange: "", routingKey: "updatedNameQueue", basicProperties: updatedNameProps, body: Encoding.UTF8.GetBytes(updatedMessage));
             Console.WriteLine("Sent {0} to updatedNameQueue", updatedMessage);
 
         };
