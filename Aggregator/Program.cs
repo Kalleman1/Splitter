@@ -69,7 +69,12 @@ class Aggregator
                 }
             }
 
-            Console.WriteLine(persons.Count.ToString());
+
+            Console.WriteLine("Person object count: {0}",persons.Count.ToString());
+            foreach (Person person in persons) 
+            {
+                Console.WriteLine("Person name:{0}, person age:{1}", person.getFullName(), person.Age);
+            }
         };
 
         //Opret basicconsume på compositeQueue
@@ -110,6 +115,11 @@ class Aggregator
         public bool hasAge()
         {
             return Age < 0;
+        }
+
+        public string getFullName()
+        { 
+            return FirstName + " " + LastName;
         }
     }
 }

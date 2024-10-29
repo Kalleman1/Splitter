@@ -29,10 +29,10 @@ class AgeConsumer
             var message = Encoding.UTF8.GetString(body);
             Console.WriteLine(" [x] Received {0}", message);
 
-            string newMessage = Convert.ToInt32(message+5).ToString();
+            string newMessage = (Convert.ToInt32(message)+5).ToString();
 
             channel.BasicPublish(exchange: "", routingKey: "updatedAgeQueue", basicProperties: null, body: Encoding.UTF8.GetBytes(newMessage));
-            Console.WriteLine("Sent {0} to updatedAgeQueue",newMessage);
+            Console.WriteLine("Sent age:{0} to updatedAgeQueue", newMessage);
         };
 
         //Opret basicconsume på ageQueue
